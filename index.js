@@ -19,22 +19,17 @@ app.use(function (req, res, next) {
 app.use(express.json());
 app.use(rateLimiter({ windowMs: 15 * 60 * 1000, max: 100, headers: true }));
 
-app.post('/player/login/dashboard', (req, res) => {
-    res.sendFile(__dirname + '/public/html/dashboard.html');
-});
-
+// Direct login without validation
 app.all('/player/growid/login/validate', (req, res) => {
-    const _token = req.body._token;
-    const growId = req.body.growId;
-    const password = req.body.password;
-
-    const token = Buffer.from(
-        `_token=${_token}&growId=${growId}&password=${password}`,
-    ).toString('base64');
+    const token = Buffer.from(`direct_login`).toString('base64');
 
     res.send(
-        `{"status":"success","message":"Account Validated.","token":"${token}","url":"","accountType":"growtopia"}`,
+        `{"status":"success","message":"Login Successful.","token":"${token}","url":"","accountType":"growtopia"}`,
     );
+});
+
+app.post('/player/login/dashboard', (req, res) => {
+    res.sendFile(__dirname + '/public/html/dashboard.html');
 });
 
 app.post('/player/validate/close', function (req, res) {
